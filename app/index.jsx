@@ -1,5 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
+import { useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from "react"; // useState hook -> allows us to dynamically change data on page. works with [variable, setFunction] pair. and a default initial value
 import { Pressable, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -22,12 +23,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Index() {
   // useState hook to update/ render changes to list
   const [todos, setTodos] = useState([]);
-
   // useState hook to update/ render new text
   const [text, setText] = useState('')
-
   // color scheme state
   const { colorScheme, setColorScheme, theme } = useContext(ThemeContext) // destructure from useContext inside of ThemeContext
+  // use dynamic routing to navigate
+  const router = useRouter()
 
   // useEffect to load data into app
   useEffect(() => {
@@ -61,6 +62,7 @@ export default function Index() {
     }
     storeData()
   }, [todos])
+
   // define loaded and error for fonts hook
   const [loaded, error] = useFonts({
     Inter_500Medium,
@@ -100,18 +102,27 @@ export default function Index() {
     setTodos(todos.filter(todo => todo.id !== id)); // filter() will loop through todos and then return new array without the todo with matching id
   } 
 
+  // handle dynamic navigation
+  const handlePress = (id) => {
+    router.push(`/todos/${id}`)
+  }
+
   // render task
   // show completed toggle button
   // delete the task from list
   const renderItem = ( { item }) => (
     <View style={ styles.todoItem }>
-      
-      <Text
-        style={[styles.todoText, item.completed && styles.completedText]} 
-        onPress={() => toggleTodo(item.id)}> 
-        {item.title} 
-      </Text>
-      <Pressable onPress={() => removeTodo(item.id)}> 
+      <Pressable 
+      onPress={() => handlePress(item.id)}
+      onLongPress={() => toggleTodo(item.id)}>
+        <Text
+          style={[styles.todoText, item.completed && styles.completedText]} 
+          > 
+          {item.title} 
+        </Text>
+      </Pressable>
+      <Pressable 
+        onPress={() => removeTodo(item.id)}> 
       <MaterialCommunityIcons name="delete-circle" size={24} color="red" />
       </Pressable>
     </View>
@@ -128,6 +139,7 @@ export default function Index() {
         
         <TextInput 
           style={ styles.input }
+          maxLength={30}
           placeholder="Add a new task"
           placeholderTextColor="gray"
           value={text}
