@@ -1,7 +1,7 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import { useContext, useEffect, useState } from "react"; // useState hook -> allows us to dynamically change data on page. works with [variable, setFunction] pair. and a default initial value
-import { Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 // import our data
@@ -159,6 +159,7 @@ export default function Index() {
         keyboardDismissMode="on-drag">
       </Animated.FlatList>
       </SafeAreaView>
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'}/>
     </SafeAreaProvider>
   );
 }
